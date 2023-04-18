@@ -52,7 +52,7 @@ def sample_text(sess, args_text, translation, style=None):
     fields = ['coordinates', 'sequence', 'bias', 'e', 'pi', 'mu1', 'mu2', 'std1', 'std2',
               'rho', 'window', 'kappa', 'phi', 'finish', 'zero_states']
     vs = namedtuple('Params', fields)(
-        *[tf.get_collection(name)[0] for name in fields]
+        *[tf.compat.v1.get_collection(name)[0] for name in fields]
     )
 
     text = np.array([translation.get(c, 0) for c in args_text])
@@ -126,11 +126,11 @@ def main():
     charset = [rev_translation[i] for i in range(len(rev_translation))]
     charset[0] = ''
 
-    config = tf.ConfigProto(
+    config = tf.compat.v1.ConfigProto(
         device_count={'GPU': 0}
     )
-    with tf.Session(config=config) as sess:
-        saver = tf.train.import_meta_graph(args.model_path + '.meta')
+    with tf.compat.v1.Session(config=config) as sess:
+        saver = tf.compat.v1.train.import_meta_graph(args.model_path + '.meta')
         saver.restore(sess, args.model_path)
 
         while True:
@@ -195,15 +195,25 @@ def main():
                 ax[1, 1].set_yticklabels(list(charset), rotation='vertical', fontsize=8)
                 ax[1, 1].grid(False)
                 ax[1, 1].set_title('Window')
-
+                if args.save is not None:
+                    print("Argument recieved")
+                    plt.draw()
+                    plt.savefig(args.save)
                 plt.show()
+                
             else:
                 fig, ax = plt.subplots(1, 1)
                 for stroke in split_strokes(cumsum(np.array(coords))):
                     plt.plot(stroke[:, 0], -stroke[:, 1])
+                ax.axis('off')
                 ax.set_title('Handwriting')
-                ax.set_aspect('equal')
+                #ax.set_aspect('equal')
+                if args.save is not None:
+                    print("Argument received in else")
+                    #plt.draw()
+                    plt.savefig(args.save, bbox_inches='tight', pad_inches=0)
                 plt.show()
+                
 
             if args.animation:
                 fig, ax = plt.subplots(1, 1, frameon=False, figsize=(2 * (maxx - minx + 2) / (maxy - miny + 1), 2))
@@ -234,7 +244,9 @@ def main():
 
                 anim = animation.FuncAnimation(fig, _update, frames=len(sumed) - 2,
                                                interval=16, blit=True, repeat=False)
+                print("Entering save condition")
                 if args.save is not None:
+                    print("Argument recieved")
                     anim.save(args.save, fps=60, extra_args=['-vcodec', 'libx264'])
                 plt.show()
 
