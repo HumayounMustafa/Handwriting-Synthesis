@@ -1,4 +1,4 @@
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1JFssb6PF0UAAzd7xVZtlaN9afM7Hdimf?usp=sharing)]
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1JFssb6PF0UAAzd7xVZtlaN9afM7Hdimf?usp=sharing))
 
 ## Handwriting generation
 Implementation of handwriting generation with use of recurrent neural networks in tensorflow. Based on Alex Graves paper (https://arxiv.org/abs/1308.0850).
